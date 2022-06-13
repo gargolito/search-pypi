@@ -25,8 +25,7 @@ def parse_html(src):
     """
     pypi = zoup(src, "html.parser")
     lis = list(pypi.find_all('li'))
-    likids = [ lii for lii in lis if lii != '\n' ]
-    return likids
+    return [ lii for lii in lis if lii != '\n' ]
 
 def extract_info(likids):
     """Use bs4 to fine search results that match css tags
@@ -37,7 +36,7 @@ def extract_info(likids):
     Returns:
         list: tuples with package names, version, and description
     """
-    output = list()
+    output = []
     for liss in likids:
         li = zoup(str(liss), 'html.parser')
         try:
@@ -48,10 +47,7 @@ def extract_info(likids):
             output.append((name, version, desc))
         except:
             continue
-    if output:
-        return output
-    else:
-        return None
+    return output or None
 
 def print_output(output, search_term, total, pages):
     """ Parse list of tuples with pkg, version, description
@@ -61,10 +57,10 @@ def print_output(output, search_term, total, pages):
         total (int): total number of results found
         pages (int): total number of pages with results
     """
-    dic = dict((x[0],x[1:]) for x in output)
+    dic = {x[0]: x[1:] for x in output}
     keys = sorted(dic, key = lambda s: s.casefold())
     out = [(k,dic[k][0],dic[k][1]) for k in keys]
-    l = max([ len(n[0]) for n in output ]) + 4
+    l = max(len(n[0]) for n in output) + 4
     # for n,v,d in sorted(output):
     for n,v,d in out:
         print(f"{n : <{l}} {v : <10}\t{d}")
@@ -87,11 +83,7 @@ def main(search, page = 1):
     else:
         src = s.get(f'https://pypi.org/search/?q={search}').text
     parsed = parse_html(src)
-    extracted = extract_info(parsed)
-    if extracted:
-        return extracted
-    else:
-        return None
+    return extracted if (extracted := extract_info(parsed)) else None
 
 if __name__ == '__main__':
     s = Session()
@@ -102,12 +94,10 @@ if __name__ == '__main__':
         pages += 1
         if n == 1:
             out |= set(main(seek))
+        elif more := main(seek, n):
+            out |= set(more)
         else:
-            more = main(seek, n)
-            if more:
-                out |= set(more)
-            else:
-                break
+            break
     if pages == 9:
         pages = 10
     print(f"\nResults for {seek}:")
