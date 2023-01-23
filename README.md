@@ -39,8 +39,4 @@ open your ~/.bashrc in your favorite editor and add your ~/bin directory to PATH
 export PATH=~/bin:${PATH}
 ```
 
-## TODO
-* sort by newest
-* option to limit number of searched pages
-* include last updated time/date
-
+##[TODO](TODO.md)
