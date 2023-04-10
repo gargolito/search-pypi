@@ -39,4 +39,8 @@ open your ~/.bashrc in your favorite editor and add your ~/bin directory to PATH
 export PATH=~/bin:${PATH}
 ```
 
+* You can also add an alias in your bashrc to make it easier to run. (thanks @tagref)
+```
+alias pipsearch='~/bin/search-pypi.py'
+```
 ## [TODO](TODO.md)
